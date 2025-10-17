@@ -195,3 +195,113 @@ children: [
 ```
 
 ---
+
+### Páginas de quando for usada uma rota inválida e de erro
+
+1 - Adicione um arquivo chamado **e404.tsx** em **pages**, contendo:
+
+```js
+export function NotFound() {
+	return (
+		<div>
+			<h1>404 - Página não encontrada</h1>
+			<h3>
+				Voltar para a <a href='/'>página inicial</a>
+			</h3>
+		</div>
+	)
+}
+```
+
+2 - Adicione como última rota em **routes.tsx**:
+
+```js
+{
+	path: '*',
+	element: <NotFound />,
+},
+```
+
+- Assim vai passar por todas as rotas, e se não encontrar nenhuma exibe essa.
+
+3 - Adicione um arquivo chamado **error.tsx** em **pages**, contendo:
+
+```js
+import { useRouteError } from 'react-router-dom'
+
+interface RouteError {
+	statusText?: string
+	message?: string
+}
+
+export function ErrorPage() {
+	const error = useRouteError() as RouteError
+	console.error(error)
+
+	return (
+		<div id='error-page'>
+			<h1>Oops!</h1>
+			<p>Desculpe, ocorreu um erro.</p>
+			<p>
+				<i>{error.statusText || error.message}</i>
+			</p>
+		</div>
+	)
+}
+```
+
+4 - Adicione na primeira rota **/** em **routes.tsx** e mova as 2 rotas existentes para dentro do **children** dessa, mantendo a rota **\*** not found, por último:
+
+```js
+{
+	path: '/',
+	errorElement: <ErrorPage />,
+	children: [ /* Mova as 2 rotas existentes para cá */ ],
+},
+```
+
+O arquivo final ficará assim:
+
+```js
+export const router = createBrowserRouter([
+	{
+		path: '/',
+		errorElement: <ErrorPage />,
+		children: [
+			{
+				path: '/',
+				element: <AppLayout />,
+				children: [{ path: '/', element: <Dashboard /> }],
+			},
+			{
+				path: '/sign-in',
+				element: <AuthLayout />,
+				children: [{ path: '/sign-in', element: <SignIn /> }],
+			},
+		],
+	},
+	{
+		path: '*',
+		element: <NotFound />,
+	},
+])
+```
+
+5 - Para testar, basta disparar um erro fictício de alguma página, ex:
+
+```js
+export function SignIn() {
+	throw new Error('Simulação de erro no SignIn')
+	return <h2>SignIn Page!</h2>
+}
+// ou
+export function Dashboard() {
+	throw new Error('Simulação de erro no Dashboard')
+	return <h2>Dashboard Page!</h2>
+}
+```
+
+- De refresh, acesse essas rotas e veja os erros.  
+  Não esqueça de removê-los depois.
+
+---
