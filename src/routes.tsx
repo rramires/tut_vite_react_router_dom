@@ -1,4 +1,8 @@
-import { createBrowserRouter } from 'react-router-dom'
+import {
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+} from 'react-router-dom'
 
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
@@ -7,7 +11,21 @@ import { SignIn } from './pages/auth/sign-in'
 import { NotFound } from './pages/e404'
 import { ErrorPage } from './pages/error'
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+	createRoutesFromElements(
+		<Route path='/' errorElement={<ErrorPage />}>
+			<Route path='/' element={<AppLayout />}>
+				<Route index element={<Dashboard />} />
+			</Route>
+			<Route path='/sign-in' element={<AuthLayout />}>
+				<Route index element={<SignIn />} />
+			</Route>
+			<Route path='*' element={<NotFound />} />
+		</Route>,
+	),
+)
+
+/* export const router = createBrowserRouter([
 	{
 		path: '/',
 		errorElement: <ErrorPage />,
@@ -15,12 +33,12 @@ export const router = createBrowserRouter([
 			{
 				path: '/',
 				element: <AppLayout />,
-				children: [{ path: '/', element: <Dashboard /> }],
+				children: [{ index: true, element: <Dashboard /> }],
 			},
 			{
 				path: '/sign-in',
 				element: <AuthLayout />,
-				children: [{ path: '/sign-in', element: <SignIn /> }],
+				children: [{ index: true, element: <SignIn /> }],
 			},
 		],
 	},
@@ -28,4 +46,4 @@ export const router = createBrowserRouter([
 		path: '*',
 		element: <NotFound />,
 	},
-])
+]) */

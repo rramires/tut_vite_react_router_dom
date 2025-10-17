@@ -164,16 +164,18 @@ export const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <AppLayout />,
-		children: [{ path: '/', element: <Dashboard /> }],
+		children: [{ index: true, element: <Dashboard /> }],
 	},
 	{
-		path: '/',
+		path: '/sign-in',
 		element: <AuthLayout />,
-		children: [{ path: '/sign-in', element: <SignIn /> }],
+		children: [{ index: true, element: <SignIn /> }],
 	},
 ])
 ```
 
+- Index = true no elemento children, significa pegae a mesmo path do elemento pai.  
+  No caso **/** e **/sign-in**, nas respectivas sub-páginas. Caso necessite que carregue só quando for usado um path diferente, remova **index: true** e adicione **path: '/alguma-coisa'**.
 - Perceba que entrando em http://localhost:3001/ que é o "/",
   aparece o conteúdo da página AppLayout, e carrega no local que foi adicionado o Outlet o conteúdo de Dashboard: "Dashboard Page!"
 
@@ -188,7 +190,7 @@ children: [
 	{
 		path: '/sign-in',
 		element: <SignIn />,
-		children: [{ path: '/other-route', element: <OtherSubPage /> }],
+		children: [{ index: true /* OR */ path: '/other-route', element: <OtherSubPage /> }],
 	},
 ]
 // use Outlet in SignIn page to load OtherSubPage
@@ -263,6 +265,15 @@ export function ErrorPage() {
 O arquivo final ficará assim:
 
 ```js
+import { createBrowserRouter } from 'react-router-dom'
+
+import { AppLayout } from './pages/_layouts/app'
+import { AuthLayout } from './pages/_layouts/auth'
+import { Dashboard } from './pages/app/dashboard'
+import { SignIn } from './pages/auth/sign-in'
+import { NotFound } from './pages/e404'
+import { ErrorPage } from './pages/error'
+
 export const router = createBrowserRouter([
 	{
 		path: '/',
@@ -271,12 +282,12 @@ export const router = createBrowserRouter([
 			{
 				path: '/',
 				element: <AppLayout />,
-				children: [{ path: '/', element: <Dashboard /> }],
+				children: [{ index: true, element: <Dashboard /> }],
 			},
 			{
 				path: '/sign-in',
 				element: <AuthLayout />,
-				children: [{ path: '/sign-in', element: <SignIn /> }],
+				children: [{ index: true, element: <SignIn /> }],
 			},
 		],
 	},
@@ -285,6 +296,37 @@ export const router = createBrowserRouter([
 		element: <NotFound />,
 	},
 ])
+```
+
+Também é possível usar a sintaxe XML. No caso ficaria assim:
+
+```js
+import {
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+} from 'react-router-dom'
+
+import { AppLayout } from './pages/_layouts/app'
+import { AuthLayout } from './pages/_layouts/auth'
+import { Dashboard } from './pages/app/dashboard'
+import { SignIn } from './pages/auth/sign-in'
+import { NotFound } from './pages/e404'
+import { ErrorPage } from './pages/error'
+
+export const router = createBrowserRouter(
+	createRoutesFromElements(
+		<Route path='/' errorElement={<ErrorPage />}>
+			<Route path='/' element={<AppLayout />}>
+				<Route index element={<Dashboard />} />
+			</Route>
+			<Route path='/sign-in' element={<AuthLayout />}>
+				<Route index element={<SignIn />} />
+			</Route>
+			<Route path='*' element={<NotFound />} />
+		</Route>,
+	),
+)
 ```
 
 5 - Para testar, basta disparar um erro fictício de alguma página, ex:
