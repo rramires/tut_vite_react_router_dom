@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async'
 import { useRouteError } from 'react-router-dom'
 
 interface RouteError {
@@ -10,12 +11,15 @@ export function ErrorPage() {
 	console.error(error)
 
 	return (
-		<div id='error-page'>
-			<h1>Oops!</h1>
-			<p>Desculpe, ocorreu um erro.</p>
-			<p>
-				<i>{error.statusText || error.message}</i>
-			</p>
-		</div>
+		<>
+			<Helmet title='Error' />
+			<div id='error-page'>
+				<h1>Oops!</h1>
+				<p>Desculpe, ocorreu um erro.</p>
+				<p>
+					<i>{error.statusText || error.message}</i>
+				</p>
+			</div>
+		</>
 	)
 }
