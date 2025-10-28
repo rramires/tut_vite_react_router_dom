@@ -89,3 +89,111 @@ pnpm dev
   a outra página SignIn: **"SignIn Page!"**
 
 ---
+
+### Troca de conteúdo em local determinado do Layout
+
+1 - Adicione uma pasta **\_layouts** em **pages**:
+
+```sh
+mkdir src/pages/_layouts
+```
+
+- Nela vamos criar 2 layouts básicos para exemplificar.  
+  Um para a área aberta e outro para a área logada.
+
+2 - Na pasta **\_layouts** crie um aquivo **app.tsx** e adicione:
+
+```js
+import { Outlet } from 'react-router-dom'
+
+export function AppLayout() {
+	return (
+		<>
+			<header>
+				<h1>AppLayout Header</h1>
+			</header>
+			<main>
+				{/* Content will change here */}
+				<Outlet />
+			</main>
+			<footer>
+				<p>AppLayout Footer</p>
+			</footer>
+		</>
+	)
+}
+```
+
+3 - Na pasta **\_layouts** crie um aquivo **auth.tsx** e adicione:
+
+```js
+import { Outlet } from 'react-router-dom'
+
+export function AuthLayout() {
+	return (
+		<>
+			<header>
+				<h1>AuthLayout</h1>
+			</header>
+			<main>
+				{/* Content will change here */}
+				<Outlet />
+			</main>
+			<footer>
+				<p>AuthLayout Footer</p>
+			</footer>
+		</>
+	)
+}
+```
+
+4 - Modifique o arquivo **routes.tsx** para criar a nova estrutura de rotas:
+
+```js
+export const router = createBrowserRouter([
+	// remova
+	/* {
+		path: '/',
+		element: <Dashboard />,
+	},
+	{
+		path: '/sign-in',
+		element: <SignIn />,
+	}, */
+	// adicione
+	{
+		path: '/',
+		element: <AppLayout />,
+		children: [{ index: true, element: <Dashboard /> }],
+	},
+	{
+		path: '/sign-in',
+		element: <AuthLayout />,
+		children: [{ index: true, element: <SignIn /> }],
+	},
+])
+```
+
+- Index = true no elemento children, significa pegae a mesmo path do elemento pai.  
+  No caso **/** e **/sign-in**, nas respectivas sub-páginas. Caso necessite que carregue só quando for usado um path diferente, remova **index: true** e adicione **path: '/alguma-coisa'**.
+- Perceba que entrando em http://localhost:3001/ que é o "/",
+  aparece o conteúdo da página AppLayout, e carrega no local que foi adicionado o Outlet o conteúdo de Dashboard: "Dashboard Page!"
+
+    Troque a URL por http://localhost:3001/sign-in e veja carregar
+    a outra página AuthLayout e no local do Outlet o conteúdo de SignIn: "SignIn Page!"
+
+- Podemos ter várias sub-páginas usando sempre: **path, element e children** e usando o **Outlet** dentro delas para carregar o conteúdo desejado no local que quisermos, ex:
+
+```js
+// http://localhost:3001/sign-in/other-route
+children: [
+	{
+		path: '/sign-in',
+		element: <SignIn />,
+		children: [{ index: true /* OR */ path: '/other-route', element: <OtherSubPage /> }],
+	},
+]
+// use Outlet in SignIn page to load OtherSubPage
+```
+
+---
