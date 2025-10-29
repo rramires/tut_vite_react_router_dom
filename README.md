@@ -347,3 +347,87 @@ export function Dashboard() {
   Não esqueça de removê-los depois.
 
 ---
+
+### Adicionando o Helmet para alterar o título e/ou meta tags
+
+1 - Instale o React Helmet Async:  
+[React Helmet Async](https://www.npmjs.com/package/react-helmet-async)
+
+```sh
+pnpm add react-helmet-async
+```
+
+2 - No **App.tsx**, adicione o contexto do React Helmet, **HelmetProvider** envolvento o RouterProvider. E também o **Helmet** dentro dele que dará acesso a várias opções.  
+Veja mais em:  
+[React Helmet Async - GitHub](https://github.com/staylor/react-helmet-async?tab=readme-ov-file#usage)
+
+```js
+// adicione
+<HelmetProvider>
+	<Helmet titleTemplate='%s | Vite+RR-DOM' />
+	/* <RouterProvider router={router} /> */
+</HelmetProvider>
+```
+
+- Usamos a **titleTemplate**, que vai concatenar o título passado nas páginas, onde está o **%s**.
+
+3 - Nas páginas **dashboard.tsx** e **sign-in.tsx**, adicione somente o **Helmet** e a propriedade **title**:
+
+Em Dashboard:
+
+```js
+// importe
+import { Helmet } from 'react-helmet-async'
+
+export function Dashboard() {
+	return (
+		<>
+			// adicione
+			<Helmet title='Dashboard' />
+			<h2>Dashboard Page!</h2>
+		</>
+	)
+}
+```
+
+Em SignIn:
+
+```js
+// importe
+import { Helmet } from 'react-helmet-async'
+
+export function SignIn() {
+	return (
+		<>
+			<Helmet title='SignIn' />
+			<h2>SignIn Page!</h2>
+		</>
+	)
+}
+```
+
+4 - Rode para verificar:
+
+```sh
+pnpm dev
+```
+
+- Perceba os títulos mudando, conforme navega entre as rotas **/** e **sign-in**.
+
+5 - Adicione também, nas páginas **error.tsx** e **e404.tsx**, usando um fragment na raiz do return, para envolver o conteúdo já existente:
+
+```js
+<>
+	<Helmet title='Not Found' />
+	// <div>
+	// ...
+</>
+```
+
+```js
+<>
+	<Helmet title='Error' />
+	// <div>
+	// ...
+</>
+```
