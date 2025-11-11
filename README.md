@@ -16,7 +16,7 @@ Previous + React Router DOM
 [React Router](https://reactrouter.com/start/framework/installation)
 
 ```sh
-pnpm add react-router-dom localforage match-sorter sort-by
+pnpm add react-router-dom 
 ```
 
 2 - Adicione uma pasta **pages** e dentro dela outras duas pastas **auth** e **app**:
